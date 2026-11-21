@@ -8,6 +8,7 @@
 \usepackage{enumitem}
 \usepackage[hidelinks]{hyperref}
 \usepackage{booktabs}
+\usepackage{tabularx}
 \usepackage{natbib}
 \setlength{\parskip}{0.55em}
 \setlength{\parindent}{0pt}
@@ -19,7 +20,7 @@
 \begin{abstract}
 EvoMorph is a proposed two-dimensional evolutionary robotics system in which virtual creatures evolve both their physical morphology and joint-control parameters to perform locomotion tasks. This initial entry records the project concept, research questions, intended scope, preliminary design choices, risks and research plan. All architectural and experimental choices described here are provisional and subject to literature review and feasibility testing.
 \end{abstract}
-\section{Entry 01: Initial Ideation (21 November 2026)}
+\section{Entry 01: Initial Ideation}
 \subsection{Motivation and Concept}
 The proposed system will generate virtual creatures consisting of a central rigid body and a variable number of articulated limbs. A custom evolutionary algorithm (EA) will search over body structure and movement-controller parameters. Candidate creatures will be evaluated in a two-dimensional physics environment, initially on flat terrain, with possible extensions to slopes and obstacles.
 
@@ -87,6 +88,99 @@ Initial literature targets include \citet{sims1994}, concerning evolved virtual 
 \item Prepare the design presentation with speaker notes, distinguishing plans from implemented results.
 \end{enumerate}
 \section{Research and AI-Use Record}
+
+\clearpage
+\section{Entry 02: Foundational Literature and Benchmark Scoping}
+\subsection{Purpose and Evidence Status}
+This entry records an initial source-based review to inform the design presentation and the subsequent feasibility prototype. It is a \emph{literature scoping review}, not a completed experiment or proof of design effectiveness. Sources were accessed through publicly available abstracts, publisher descriptions and the original Sims paper. All design implications below are proposals for team verification.
+
+\subsection{Sims (1994): Evolving Virtual Creatures}
+\citet{sims1994} describes simulated three-dimensional creatures whose physical structures and neural controllers are generated using evolutionary search. The genotype is a directed graph of nodes and connections, enabling both morphology and control to vary. Fitness functions target behaviours including walking, swimming and jumping.
+
+\textbf{Relevance:} Sims establishes a direct precedent for evolving morphology and control together, and motivates treating the genotype-to-physical-creature mapping as an explicit software component.
+
+\textbf{Proposed adoption:} Co-evolution of morphology and control; physics-based evaluation; explicit genotype/phenotype distinction; locomotion as an objective.
+
+\textbf{Proposed simplification:} EvoMorph will use a 2D torso with a limited number of limbs and periodic joint controllers instead of an unconstrained 3D graph and evolved neural circuitry. This trades expressivity for feasibility and simpler operator validation.
+
+\textbf{Caution:} Sims' demonstrations do not establish that co-evolution will outperform fixed morphology under EvoMorph's evaluation budget. That remains the project's testable hypothesis.
+
+\subsection{Lipson and Pollack (2000): Evolved Robotic Lifeforms}
+\citet{lipson2000} reports a system that evolves electromechanical machines from bars, actuators and artificial neurons in a simulated environment, selecting designs for locomotion, with selected designs subsequently fabricated.
+
+\textbf{Relevance:} The study supports treating physical structure and actuation as a coupled optimisation problem. It also illustrates why the physics model and fitness criteria constrain which solutions can emerge.
+
+\textbf{Proposed adoption:} Explicit actuator parameters, modular physical components, locomotion-driven evaluation.
+
+\textbf{Proposed exclusion:} Physical fabrication and real-world transfer are outside the assignment scope. The project will not claim real-world robotics performance.
+
+\subsection{Bongard, Zykov and Lipson (2006): Adaptation After Damage}
+\citet{bongard2006} describes a four-legged robot that builds an internal model of its structure and adapts locomotion after damage. This is not the same algorithmic setting as EvoMorph: its focus is self-modelling and recovery, not simply evolving a population of virtual body plans.
+
+\textbf{Relevance:} It motivates an optional future test of robustness to morphology changes or terrain shifts.
+
+\textbf{Decision:} Do not implement self-modelling within the two-week scope. Mention robustness only as future work unless a reproducible transfer experiment is completed.
+
+\subsection{Benchmarking Literature: COCO/BBOB}
+The COCO/BBOB benchmark suite groups continuous optimisation problems by characteristics including separability, conditioning and multimodality \citep{cocoBBOB}. Its documented functions include Sphere, Rastrigin and Rosenbrock variants.
+
+\textbf{Relevance:} A standard numerical suite can test the correctness and search behaviour of the custom EA independently of the physics simulator. These functions expose different optimisation difficulties.
+
+\textbf{Important distinction:} Implementing textbook Sphere, Rastrigin or Rosenbrock formulas does \emph{not} reproduce COCO's transformed benchmark instances or its published results. A valid literature comparison requires the exact function definition, dimensionality, domain, transformations, evaluation budget and target criterion to match. Therefore, either use an established COCO problem instance with its official evaluation protocol, or explicitly label locally implemented textbook functions as diagnostic tests without claiming direct comparability.
+
+\subsection{Research-to-Design Traceability}
+\begingroup
+\small
+\noindent
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{0.24\linewidth}*{2}{>{\raggedright\arraybackslash}X}@{}}
+\toprule
+\textbf{Source} & \textbf{Evidence / inspiration} & \textbf{Proposed EvoMorph decision} \\
+\midrule
+Sims (1994) & Evolving morphology and neural control in physics & Co-evolve body and periodic control; constrain topology \\
+\addlinespace
+Lipson and Pollack (2000) & Evolved structures and actuators selected for movement & Joint-actuated bodies; distance-based evaluation \\
+\addlinespace
+Bongard et al. (2006) & Adaptation following structural damage & Robustness as future work, not core scope \\
+\addlinespace
+COCO/BBOB & Diverse, standardised optimisation problems & External benchmark with matched protocol; diagnostic functions separately \\
+\bottomrule
+\end{tabularx}\par
+\endgroup
+
+\subsection{Provisional Design Decisions and Alternatives}
+\begin{enumerate}
+\item \textbf{2D rather than 3D:} Retain, pending physics prototype. This reduces simulation and rendering complexity but limits biological realism.
+\item \textbf{Sinusoidal rather than neural controllers:} Retain initially. This is easier to reproduce and debug; may restrict responsive movement.
+\item \textbf{Variable limb count rather than fixed topology only:} Retain as the experimental enhancement, but use fixed morphology as an ablation.
+\item \textbf{Distance-only fitness first:} Retain initially to avoid tuning multiple weights without evidence; inspect possible rolling or jumping exploits.
+\item \textbf{Numerical benchmark adapter:} Separate EA selection/replacement from problem-specific representation and variation; do not claim creature-specific crossover is directly applicable to vectors.
+\end{enumerate}
+
+\subsection{Benchmark Plan Derived from the Brief}
+The assignment requires at least three problems with varied characteristics, at least one established external benchmark with published results, at least 30 independent runs per configuration, random seeds, descriptive statistics, convergence, a baseline, parameter sensitivity, a suitable significance test, and operator correctness tests.
+
+\textbf{Proposed primary experiment:} Compare full morphology--controller co-evolution with controller-only evolution and random search on flat-ground locomotion at equal fitness-evaluation budgets. Additional terrains (slope and obstacle) are conditional on simulation throughput.
+
+\textbf{External benchmark:} Investigate using an exact COCO/BBOB instance, not merely a similarly named function. Record suite version, instance IDs, dimensions, targets and budgets. Published-result comparisons will be made only when conditions are sufficiently aligned.
+
+\textbf{Analysis plan:} Record final best/worst/mean/median/standard deviation over 30 independent seeds, per-generation best and median fitness, success rates where a defensible target exists, and evaluations-to-target. For paired runs with shared seed blocks, consider the Wilcoxon signed-rank test; for independent samples, a rank-sum test may be appropriate. Document the pairing assumptions and report effect size/uncertainty, not just a p-value.
+
+\subsection{Open Questions for the Feasibility Prototype}
+\begin{enumerate}
+\item Can a two-limb Pymunk body move without unstable joints or numerical artefacts?
+\item How many headless physics evaluations per minute can the target machine complete?
+\item How should limb correspondence be defined for crossover between different limb counts?
+\item Can initialisation and repair reliably prevent invalid geometry?
+\item Does optimising displacement reward unwanted movement such as tumbling?
+\item Which exact external benchmark protocol offers a defensible published comparison within the deadline?
+\end{enumerate}
+
+\subsection{Research Reflection and Next Action}
+The literature strengthens the rationale for morphology--controller co-evolution but does not settle its performance advantage. The immediate next step is a minimal physics feasibility experiment, followed by a dated journal entry reporting observations, measured runtime and any changes to the genome or controller design. No benchmark results are claimed here.
+
+\subsection{Research Assistance and Verification Record}
+This entry was drafted with ChatGPT (GPT-6) on 21 November 2026 using a request to research the next EvoMorph journal commit against the assignment brief. Sources consulted were Sims (1994), Lipson and Pollack (2000), Bongard et al. (2006), and COCO/BBOB documentation. The team must check the cited papers and benchmark specification, record retained or revised claims, and add the relevant prompt/output extracts to the final AI usage declaration. No experimental code or measurements were generated for this entry.
+
 \bibliographystyle{plainnat}
 \bibliography{references}
 \end{document}
