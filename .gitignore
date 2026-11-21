@@ -1,0 +1,14 @@
+__pycache__/
+.pytest_cache/
+.venv/
+*.py[cod]
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.synctex.gz
+*.toc
+.DS_Store

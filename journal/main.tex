@@ -1,0 +1,92 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{booktabs}
+\usepackage{natbib}
+\setlength{\parskip}{0.55em}
+\setlength{\parindent}{0pt}
+\title{\textbf{EvoMorph}\\Research and Design Journal\\\large Initial Project Proposal and Research Questions}
+\author{Project team: \textit{To be completed}}
+\date{21 November 2026}
+\begin{document}
+\maketitle
+\begin{abstract}
+EvoMorph is a proposed two-dimensional evolutionary robotics system in which virtual creatures evolve both their physical morphology and joint-control parameters to perform locomotion tasks. This initial entry records the project concept, research questions, intended scope, preliminary design choices, risks and research plan. All architectural and experimental choices described here are provisional and subject to literature review and feasibility testing.
+\end{abstract}
+\section{Entry 01: Initial Ideation (21 November 2026)}
+\subsection{Motivation and Concept}
+The proposed system will generate virtual creatures consisting of a central rigid body and a variable number of articulated limbs. A custom evolutionary algorithm (EA) will search over body structure and movement-controller parameters. Candidate creatures will be evaluated in a two-dimensional physics environment, initially on flat terrain, with possible extensions to slopes and obstacles.
+
+The central motivation is to investigate whether useful locomotion behaviour can emerge from selection and variation rather than from hand-designed walking sequences. The interaction between body morphology and control is of particular interest: the same controller may behave differently when limb lengths, attachment positions or joint arrangements change.
+
+\subsection{Primary Research Question}
+\begin{quote}
+\textbf{RQ1:} Under an equal fitness-evaluation budget, does co-evolving virtual-creature morphology and joint-control parameters improve locomotion performance relative to evolving joint control alone with a fixed morphology?
+\end{quote}
+\subsection{Secondary Research Questions}
+\begin{enumerate}[label=\textbf{RQ\arabic*:},start=2]
+\item How do structural mutation operators (such as adding, removing or resizing limbs) affect evolutionary convergence and the validity of offspring?
+\item How sensitive is locomotion performance to mutation rate, population size and other EA parameters?
+\item How does the proposed EA compare with random search under matched evaluation budgets?
+\item Do evolved solutions transfer from flat terrain to simple slopes or obstacles, or are they highly specialised?
+\end{enumerate}
+\subsection{Objectives}
+\begin{enumerate}[label=\textbf{O\arabic*:}]
+\item Implement a reproducible, modular EA without using an EA framework.
+\item Design a genome encoding a central body, variable limb morphology and joint-control parameters.
+\item Build a deterministic-as-practicable 2D physics evaluator with controlled initial conditions and recorded random seeds.
+\item Implement selection, crossover, mutation, replacement and termination with correctness tests.
+\item Compare morphology--controller co-evolution against a fixed-morphology EA and a random-search baseline.
+\item Evaluate at least three benchmark problems and include an established external benchmark with published literature, subject to final benchmark design.
+\item Report repeated-run statistics, convergence, parameter sensitivity and limitations.
+\item Provide a visual replay of evolved creatures and reproducible experiment scripts.
+\end{enumerate}
+\section{Provisional Design}
+\subsection{Representation}
+A creature will have one central rigid body and between one and four limbs. Each limb may encode length, thickness, attachment position, joint resting angle and controller parameters. The proposed joint controller is periodic:
+\begin{equation}
+\theta_i(t)=b_i+A_i\sin(2\pi f_i t+\phi_i),
+\end{equation}
+where $b_i$ is the resting angle, $A_i$ the amplitude, $f_i$ the frequency and $\phi_i$ the phase. The simulator will use bounded joint actuation to track these targets. This is a proposed starting controller, not a validated choice.
+\subsection{Evolutionary Process}
+The initial candidate algorithm is a generational genetic algorithm with tournament selection, crossover, numerical and structural mutation, elitism and a fixed evaluation budget. Population size, mutation probabilities and other parameters will be selected after a small feasibility study. Structural operators must maintain valid limb-count and joint constraints.
+\subsection{Fitness}
+The initial objective will be forward horizontal displacement over a fixed simulation duration:
+\begin{equation}
+D=x_{\mathrm{final}}-x_{\mathrm{initial}}.
+\end{equation}
+Energy use and stability may be measured as secondary outcomes. A composite fitness function will be considered only if simple distance optimisation produces undesirable exploits. Fitness design will be revised based on observed behaviour, with all revisions documented.
+\subsection{Technology Choices Under Consideration}
+Python is proposed for rapid development and testing; Pymunk for 2D rigid-body physics; Pygame for replay; and NumPy, pandas, SciPy and Matplotlib for analysis. The EA itself will be implemented by the project team, not supplied by an EA library.
+\section{Evaluation Plan (Provisional)}
+The primary comparison is co-evolution versus controller-only evolution using matched evaluation budgets. Random search provides a basic non-evolutionary baseline. Candidate application environments are flat ground, a slope and low obstacles. The benchmark suite must also include at least one established external problem with published results; standard numerical optimisation functions are being considered, but their relevance and comparable experimental settings require further research.
+
+The intended protocol is at least 30 independent runs per configuration, with recorded seeds; best, worst, mean, median and standard deviation; convergence curves; parameter sensitivity; and appropriate statistical comparisons. The computational cost of this plan must be profiled before finalising the experiment matrix.
+\section{Constraints, Risks and Trade-offs}
+\begin{itemize}[leftmargin=*]
+\item \textbf{Time:} The software deadline is 4 December 2026. Scope will prioritise a functioning flat-ground system before terrain extensions.
+\item \textbf{Simulation stability:} Invalid geometry, joint instability and numerical artefacts may undermine fitness evaluation. Genome validation and fixed simulation conditions are planned.
+\item \textbf{Compute cost:} Many independent physics evaluations may be expensive. Headless simulation and throughput profiling will be used.
+\item \textbf{Research validity:} A visually interesting evolved creature does not establish EA superiority. Baselines, repeated runs and matched budgets are necessary.
+\item \textbf{Representation complexity:} A central body with attached limbs is less expressive than arbitrary branching morphologies but more feasible within the deadline.
+\end{itemize}
+\section{Research Plan and Sources to Investigate}
+Initial literature targets include \citet{sims1994}, concerning evolved virtual creatures and morphology/control, and \citet{lipson2000}, concerning evolved robotic structures. These references are starting points for reading, \emph{not claims that their methods or results have already been analysed}. The next journal entry will record each paper's method, representation, fitness, evaluation, limitations and concrete influence on EvoMorph. Benchmark literature and the suitability of numerical benchmarks will also be investigated.
+\section{Immediate Next Steps}
+\begin{enumerate}
+\item Establish the GitHub repository and invite the required lecturer collaborator.
+\item Read and annotate the foundational papers; record adoption/rejection decisions with citations.
+\item Prototype a single two-limbed articulated body and profile headless physics simulation.
+\item Finalise the genome schema and the baseline experiment design based on the findings.
+\item Prepare the design presentation with speaker notes, distinguishing plans from implemented results.
+\end{enumerate}
+\section{Research and AI-Use Record}
+\bibliographystyle{plainnat}
+\bibliography{references}
+\end{document}
