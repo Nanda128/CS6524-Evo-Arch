@@ -12,175 +12,112 @@
 \usepackage{natbib}
 \setlength{\parskip}{0.55em}
 \setlength{\parindent}{0pt}
-\title{\textbf{EvoMorph}\\Research and Design Journal\\\large Initial Project Proposal and Research Questions}
-\author{Project team: \textit{To be completed}}
-\date{21 November 2026}
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
+\title{\textbf{GE-Init}\\Research and Design Journal}
+\author{Project team: Nandakishore Vinayakrishnan and Daniel Moody}
 \begin{document}
-\maketitle
-\begin{abstract}
-EvoMorph is a proposed two-dimensional evolutionary robotics system in which virtual creatures evolve both their physical morphology and joint-control parameters to perform locomotion tasks. This initial entry records the project concept, research questions, intended scope, preliminary design choices, risks and research plan. All architectural and experimental choices described here are provisional and subject to literature review and feasibility testing.
-\end{abstract}
-\section{Entry 01: Initial Ideation}
-\subsection{Motivation and Concept}
-The proposed system will generate virtual creatures consisting of a central rigid body and a variable number of articulated limbs. A custom evolutionary algorithm (EA) will search over body structure and movement-controller parameters. Candidate creatures will be evaluated in a two-dimensional physics environment, initially on flat terrain, with possible extensions to slopes and obstacles.
+    \maketitle
+    \begin{abstract}
+        GE-Init is a proposed Grammatical Evolution (GE) system that will investigate how the method used to create the initial population affects GE's search performance.
+        This journal records ideas, sources, decisions and rejected alternatives as they develop; the project itself is introduced in \texttt{introduction.tex}.
+        All choices described here are provisional.
+    \end{abstract}
 
-The central motivation is to investigate whether useful locomotion behaviour can emerge from selection and variation rather than from hand-designed walking sequences. The interaction between body morphology and control is of particular interest: the same controller may behave differently when limb lengths, attachment positions or joint arrangements change.
 
-\subsection{Primary Research Question}
-\begin{quote}
-\textbf{RQ1:} Under an equal fitness-evaluation budget, does co-evolving virtual-creature morphology and joint-control parameters improve locomotion performance relative to evolving joint control alone with a fixed morphology?
-\end{quote}
-\subsection{Secondary Research Questions}
-\begin{enumerate}[label=\textbf{RQ\arabic*:},start=2]
-\item How do structural mutation operators (such as adding, removing or resizing limbs) affect evolutionary convergence and the validity of offspring?
-\item How sensitive is locomotion performance to mutation rate, population size and other EA parameters?
-\item How does the proposed EA compare with random search under matched evaluation budgets?
-\item Do evolved solutions transfer from flat terrain to simple slopes or obstacles, or are they highly specialised?
-\end{enumerate}
-\subsection{Objectives}
-\begin{enumerate}[label=\textbf{O\arabic*:}]
-\item Implement a reproducible, modular EA without using an EA framework.
-\item Design a genome encoding a central body, variable limb morphology and joint-control parameters.
-\item Build a deterministic-as-practicable 2D physics evaluator with controlled initial conditions and recorded random seeds.
-\item Implement selection, crossover, mutation, replacement and termination with correctness tests.
-\item Compare morphology--controller co-evolution against a fixed-morphology EA and a random-search baseline.
-\item Evaluate at least three benchmark problems and include an established external benchmark with published literature, subject to final benchmark design.
-\item Report repeated-run statistics, convergence, parameter sensitivity and limitations.
-\item Provide a visual replay of evolved creatures and reproducible experiment scripts.
-\end{enumerate}
-\section{Provisional Design}
-\subsection{Representation}
-A creature will have one central rigid body and between one and four limbs. Each limb may encode length, thickness, attachment position, joint resting angle and controller parameters. The proposed joint controller is periodic:
-\begin{equation}
-\theta_i(t)=b_i+A_i\sin(2\pi f_i t+\phi_i),
-\end{equation}
-where $b_i$ is the resting angle, $A_i$ the amplitude, $f_i$ the frequency and $\phi_i$ the phase. The simulator will use bounded joint actuation to track these targets. This is a proposed starting controller, not a validated choice.
-\subsection{Evolutionary Process}
-The initial candidate algorithm is a generational genetic algorithm with tournament selection, crossover, numerical and structural mutation, elitism and a fixed evaluation budget. Population size, mutation probabilities and other parameters will be selected after a small feasibility study. Structural operators must maintain valid limb-count and joint constraints.
-\subsection{Fitness}
-The initial objective will be forward horizontal displacement over a fixed simulation duration:
-\begin{equation}
-D=x_{\mathrm{final}}-x_{\mathrm{initial}}.
-\end{equation}
-Energy use and stability may be measured as secondary outcomes. A composite fitness function will be considered only if simple distance optimisation produces undesirable exploits. Fitness design will be revised based on observed behaviour, with all revisions documented.
-\subsection{Technology Choices Under Consideration}
-Python is proposed for rapid development and testing; Pymunk for 2D rigid-body physics; Pygame for replay; and NumPy, pandas, SciPy and Matplotlib for analysis. The EA itself will be implemented by the project team, not supplied by an EA library.
-\section{Evaluation Plan (Provisional)}
-The primary comparison is co-evolution versus controller-only evolution using matched evaluation budgets. Random search provides a basic non-evolutionary baseline. Candidate application environments are flat ground, a slope and low obstacles. The benchmark suite must also include at least one established external problem with published results; standard numerical optimisation functions are being considered, but their relevance and comparable experimental settings require further research.
+    \section{Entry 01: Initial Ideation (20 November 2026)}\label{sec:entry-01}
 
-The intended protocol is at least 30 independent runs per configuration, with recorded seeds; best, worst, mean, median and standard deviation; convergence curves; parameter sensitivity; and appropriate statistical comparisons. The computational cost of this plan must be profiled before finalising the experiment matrix.
-\section{Constraints, Risks and Trade-offs}
-\begin{itemize}[leftmargin=*]
-\item \textbf{Time:} The software deadline is 4 December 2026. Scope will prioritise a functioning flat-ground system before terrain extensions.
-\item \textbf{Simulation stability:} Invalid geometry, joint instability and numerical artefacts may undermine fitness evaluation. Genome validation and fixed simulation conditions are planned.
-\item \textbf{Compute cost:} Many independent physics evaluations may be expensive. Headless simulation and throughput profiling will be used.
-\item \textbf{Research validity:} A visually interesting evolved creature does not establish EA superiority. Baselines, repeated runs and matched budgets are necessary.
-\item \textbf{Representation complexity:} A central body with attached limbs is less expressive than arbitrary branching morphologies but more feasible within the deadline.
-\end{itemize}
-\section{Research Plan and Sources to Investigate}
-Initial literature targets include \citet{sims1994}, concerning evolved virtual creatures and morphology/control, and \citet{lipson2000}, concerning evolved robotic structures. These references are starting points for reading, \emph{not claims that their methods or results have already been analysed}. The next journal entry will record each paper's method, representation, fitness, evaluation, limitations and concrete influence on EvoMorph. Benchmark literature and the suitability of numerical benchmarks will also be investigated.
-\section{Immediate Next Steps}
-\begin{enumerate}
-\item Establish the GitHub repository and invite the required lecturer collaborator.
-\item Read and annotate the foundational papers; record adoption/rejection decisions with citations.
-\item Prototype a single two-limbed articulated body and profile headless physics simulation.
-\item Finalise the genome schema and the baseline experiment design based on the findings.
-\item Prepare the design presentation with speaker notes, distinguishing plans from implemented results.
-\end{enumerate}
-\section{Research and AI-Use Record}
+    \subsection{Motivation}\label{subsec:motivation}
+    We compared the module's three EAs (GA, tree-based GP and GE) as candidate projects against the Assignment 02 requirements: an external benchmark with published results, an enhancement evaluated by ablation, and literature-grounded design.
+    GE \citep{ryan1998} has a known weakness in its initial population: random genomes produce many invalid individuals and duplicates of short programs, which was suggested as a reason for GE trailing GP on early benchmarks \citep{oneill2001}.
+    Alternative initialisers have since been compared \citep{harper2010,nicolau2017}.
+    This suggested a project in which the ``enhancement'' is the central experiment rather than an add-on.
 
-\clearpage
-\section{Entry 02: Foundational Literature and Benchmark Scoping}
-\subsection{Purpose and Evidence Status}
-This entry records an initial source-based review to inform the design presentation and the subsequent feasibility prototype. It is a \emph{literature scoping review}, not a completed experiment or proof of design effectiveness. Sources were accessed through publicly available abstracts, publisher descriptions and the original Sims paper. All design implications below are proposals for team verification.
+    \subsection{Research Questions}\label{subsec:research-questions}
+    \begin{enumerate}[label=\textbf{RQ\arabic*:}]
+        \item Under an equal evaluation budget, does the initialisation method change GE's search performance, and does this depend on the problem type?
+        \item How do the initialisers differ in the populations they create (invalid individuals, duplicates, size, depth)?
+        \item Do published findings hold in our implementation: a PTC2 variant performing best \citep{nicolau2017}, and random initialisation winning on the Santa Fe ant \citep{ryan2003chorus}?
+        \item Does GE beat random search and a hill climber at an equal budget?
+        \item How sensitive are the results to the main EA parameters?
+    \end{enumerate}
 
-\subsection{Sims (1994): Evolving Virtual Creatures}
-\citet{sims1994} describes simulated three-dimensional creatures whose physical structures and neural controllers are generated using evolutionary search. The genotype is a directed graph of nodes and connections, enabling both morphology and control to vary. Fitness functions target behaviours including walking, swimming and jumping.
+    \subsection{Provisional Design}\label{subsec:provisional-design}
+    Individuals are variable-length lists of integer codons, mapped left-most-first through a BNF grammar using $c \bmod k$, with wrapping disabled so that incomplete mappings are invalid.
+    Four initialisers will be compared:
+    \begin{itemize}[leftmargin=*,itemsep=0pt]
+        \item \textbf{RND:} random fixed-length genomes;
+        \item \textbf{RVD:} RND with invalid and duplicate individuals re-sampled;
+        \item \textbf{SI:} ramped half-and-half on derivation trees, encoded back into codons;
+        \item \textbf{PTC2:} trees grown to a random target size, expanding open branches in random order \citep{luke2000,harper2010}.
+    \end{itemize}
+    The engine will be generational, with tournament selection, effective one-point crossover, per-codon mutation and elitism, using the settings of \citet[Table 2]{nicolau2017} so that results can be compared directly.
 
-\textbf{Relevance:} Sims establishes a direct precedent for evolving morphology and control together, and motivates treating the genotype-to-physical-creature mapping as an explicit software component.
+    \subsection{Risks}\label{subsec:risks}
+    \begin{itemize}[leftmargin=*,itemsep=0pt]
+        \item \textbf{Time:} build RND and RVD first; drop PTC2 first if behind.
+        \item \textbf{Mapper bugs:} would corrupt every result; mitigated by hand-traced tests.
+        \item \textbf{Unfair comparison:} same seeds, grammars and evaluation budget for every method.
+    \end{itemize}
 
-\textbf{Proposed adoption:} Co-evolution of morphology and control; physics-based evaluation; explicit genotype/phenotype distinction; locomotion as an objective.
+    \subsection{Alternatives Considered}\label{subsec:alternatives-considered}
+    \begin{itemize}[leftmargin=*,itemsep=0pt]
+        \item \textbf{GA (e.g. TSP):} simple, with known optima, but limited scope for innovation.
+        \item \textbf{Tree-based GP with an enhanced selection method:} well studied, but prone to bloat and less tied to the module's focus.
+        \item \textbf{EvoMorph (evolving virtual-creature bodies and controllers)} \citep{sims1994,lipson2000}: visually compelling, but physics-simulation cost and the lack of a matched published benchmark made it a poor fit for a two-week build. Kept as a possible extension through a GE ``body grammar''.
+    \end{itemize}
 
-\textbf{Proposed simplification:} EvoMorph will use a 2D torso with a limited number of limbs and periodic joint controllers instead of an unconstrained 3D graph and evolved neural circuitry. This trades expressivity for feasibility and simpler operator validation.
 
-\textbf{Caution:} Sims' demonstrations do not establish that co-evolution will outperform fixed morphology under EvoMorph's evaluation budget. That remains the project's testable hypothesis.
+    \section{Entry 02: Literature and Benchmark Scoping (22 November 2026)}\label{sec:entry-02}
+    This is a literature scoping review, not an experiment.
+    Nicolau (2017), Ryan and Azad (2003) and the Koza material were read from the module knowledge base; other details were checked against publisher and index records.
 
-\subsection{Lipson and Pollack (2000): Evolved Robotic Lifeforms}
-\citet{lipson2000} reports a system that evolves electromechanical machines from bars, actuators and artificial neurons in a simulated environment, selecting designs for locomotion, with selected designs subsequently fabricated.
+    \subsection{Sources and their Influence}\label{subsec:sources}
+    \begingroup
+    \small
+    \noindent
+    \begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{0.22\linewidth}LL@{}}
+        \toprule
+        \textbf{Source}                      & \textbf{Key finding}                                                                                         & \textbf{GE-Init decision}                                                             \\
+        \midrule
+        \citet{ryan1998}; \citet{oneill2001} & GE mapping; GP beat GE on regression, linked to GE's random initialisation & Representation and mapper; RND as historical baseline \\
+        \addlinespace
+        \citet{ryan2003chorus}               & In Chorus, sensible init raised early fitness, but random init won on Santa Fe & SI method; Santa Fe hypothesis (RQ3); report medians and effect sizes \\
+        \addlinespace
+        \citet{nicolau2017}                  & Six initialisers, 16 problems: a PTC2 variant best, RVD a good compromise; parameters must suit each grammar & Four-method subset; experimental settings; Keijzer-6, Vladislavleva-4, 11-multiplexer \\
+        \addlinespace
+        \citet{luke2000}; \citet{harper2010} & Size-controlled tree creation; ``explosive'' grammars skew random and RHH trees & PTC2 implementation; check grammars for explosiveness \\
+        \addlinespace
+        \citet{white2013}                    & Blacklists the quartic, multiplexer, parity and artificial ant; recommends Keijzer-6 and Vladislavleva-4 & Keijzer-6 \citep{keijzer2003} and Vladislavleva-4 \citep{vladislavleva2009} as the established benchmarks \\
+        \addlinespace
+        \citet{langdon1998}                  & Santa Fe is deceptive; GP, SA and hill climbing barely beat random search & Random-search and hill-climber baselines \\
+        \bottomrule
+    \end{tabularx}\par
+    \endgroup
 
-\textbf{Relevance:} The study supports treating physical structure and actuation as a coupled optimisation problem. It also illustrates why the physics model and fitness criteria constrain which solutions can emerge.
+    \subsubsection{Cautions:}
+    Chorus is not GE, and Ryan and Azad used steady-state roulette selection, so their results are indicative only.
+    Nicolau did not test the Santa Fe ant, and O'Neill and Ryan report only curves, so Santa Fe comparisons will be qualitative.
+    Luke (2000), Harper (2010), White et al.\ (2013) and the GE version of sensible initialisation \citep{ryan2003ge} have not yet been read in full.
 
-\textbf{Proposed adoption:} Explicit actuator parameters, modular physical components, locomotion-driven evaluation.
+    \subsection{Decisions}\label{subsec:decisions}
+    \begin{itemize}[leftmargin=*,itemsep=0pt]
+        \item Keep the Santa Fe ant and 11-multiplexer \citep{koza1992} despite the blacklist: they link to the GE/GP literature, and their deceptive landscapes are where initial diversity may matter most.
+        \item Integer codons, wrapping off and generational replacement, matching Nicolau.
+        \item Four initialisers, not six: PIGrow and PTC2D deferred.
+        \item No linear scaling \citep{keijzer2003}, to keep comparisons matched.
+        \item Statistics: Mann--Whitney rank-sum tests \citep{mann1947} with Holm correction \citep{holm1979} and the $A_{12}$ effect size \citep{vargha2000}, following \citet{derrac2011}.
+        \item Santa Fe step limit, 400 \citep{koza1992} or 600 \citep{langdon1998}.
+    \end{itemize}
 
-\textbf{Proposed exclusion:} Physical fabrication and real-world transfer are outside the assignment scope. The project will not claim real-world robotics performance.
+    \subsection{Open Questions}\label{subsec:open-questions}
+    Can SI fill a population with unique individuals at the proposed depths for every grammar?
+    How long does a full-size run take, and can Nicolau's 100 runs per configuration be afforded?
+    Which Santa Fe step limit gives the most defensible comparison?
 
-\subsection{Bongard, Zykov and Lipson (2006): Adaptation After Damage}
-\citet{bongard2006} describes a four-legged robot that builds an internal model of its structure and adapts locomotion after damage. This is not the same algorithmic setting as EvoMorph: its focus is self-modelling and recovery, not simply evolving a population of virtual body plans.
+    \subsection{AI-Use Record}\label{subsec:ai-use-record}
+    Drafted with Claude (Opus 5.5) via claude.ai, 20--22 November 2026, including project-option comparison, design drafting and a web search to verify references and benchmark definitions.
+    The team must check every cited paper and add prompt/output extracts to the AI usage declaration.
 
-\textbf{Relevance:} It motivates an optional future test of robustness to morphology changes or terrain shifts.
-
-\textbf{Decision:} Do not implement self-modelling within the two-week scope. Mention robustness only as future work unless a reproducible transfer experiment is completed.
-
-\subsection{Benchmarking Literature: COCO/BBOB}
-The COCO/BBOB benchmark suite groups continuous optimisation problems by characteristics including separability, conditioning and multimodality \citep{cocoBBOB}. Its documented functions include Sphere, Rastrigin and Rosenbrock variants.
-
-\textbf{Relevance:} A standard numerical suite can test the correctness and search behaviour of the custom EA independently of the physics simulator. These functions expose different optimisation difficulties.
-
-\textbf{Important distinction:} Implementing textbook Sphere, Rastrigin or Rosenbrock formulas does \emph{not} reproduce COCO's transformed benchmark instances or its published results. A valid literature comparison requires the exact function definition, dimensionality, domain, transformations, evaluation budget and target criterion to match. Therefore, either use an established COCO problem instance with its official evaluation protocol, or explicitly label locally implemented textbook functions as diagnostic tests without claiming direct comparability.
-
-\subsection{Research-to-Design Traceability}
-\begingroup
-\small
-\noindent
-\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{0.24\linewidth}*{2}{>{\raggedright\arraybackslash}X}@{}}
-\toprule
-\textbf{Source} & \textbf{Evidence / inspiration} & \textbf{Proposed EvoMorph decision} \\
-\midrule
-Sims (1994) & Evolving morphology and neural control in physics & Co-evolve body and periodic control; constrain topology \\
-\addlinespace
-Lipson and Pollack (2000) & Evolved structures and actuators selected for movement & Joint-actuated bodies; distance-based evaluation \\
-\addlinespace
-Bongard et al. (2006) & Adaptation following structural damage & Robustness as future work, not core scope \\
-\addlinespace
-COCO/BBOB & Diverse, standardised optimisation problems & External benchmark with matched protocol; diagnostic functions separately \\
-\bottomrule
-\end{tabularx}\par
-\endgroup
-
-\subsection{Provisional Design Decisions and Alternatives}
-\begin{enumerate}
-\item \textbf{2D rather than 3D:} Retain, pending physics prototype. This reduces simulation and rendering complexity but limits biological realism.
-\item \textbf{Sinusoidal rather than neural controllers:} Retain initially. This is easier to reproduce and debug; may restrict responsive movement.
-\item \textbf{Variable limb count rather than fixed topology only:} Retain as the experimental enhancement, but use fixed morphology as an ablation.
-\item \textbf{Distance-only fitness first:} Retain initially to avoid tuning multiple weights without evidence; inspect possible rolling or jumping exploits.
-\item \textbf{Numerical benchmark adapter:} Separate EA selection/replacement from problem-specific representation and variation; do not claim creature-specific crossover is directly applicable to vectors.
-\end{enumerate}
-
-\subsection{Benchmark Plan Derived from the Brief}
-The assignment requires at least three problems with varied characteristics, at least one established external benchmark with published results, at least 30 independent runs per configuration, random seeds, descriptive statistics, convergence, a baseline, parameter sensitivity, a suitable significance test, and operator correctness tests.
-
-\textbf{Proposed primary experiment:} Compare full morphology--controller co-evolution with controller-only evolution and random search on flat-ground locomotion at equal fitness-evaluation budgets. Additional terrains (slope and obstacle) are conditional on simulation throughput.
-
-\textbf{External benchmark:} Investigate using an exact COCO/BBOB instance, not merely a similarly named function. Record suite version, instance IDs, dimensions, targets and budgets. Published-result comparisons will be made only when conditions are sufficiently aligned.
-
-\textbf{Analysis plan:} Record final best/worst/mean/median/standard deviation over 30 independent seeds, per-generation best and median fitness, success rates where a defensible target exists, and evaluations-to-target. For paired runs with shared seed blocks, consider the Wilcoxon signed-rank test; for independent samples, a rank-sum test may be appropriate. Document the pairing assumptions and report effect size/uncertainty, not just a p-value.
-
-\subsection{Open Questions for the Feasibility Prototype}
-\begin{enumerate}
-\item Can a two-limb Pymunk body move without unstable joints or numerical artefacts?
-\item How many headless physics evaluations per minute can the target machine complete?
-\item How should limb correspondence be defined for crossover between different limb counts?
-\item Can initialisation and repair reliably prevent invalid geometry?
-\item Does optimising displacement reward unwanted movement such as tumbling?
-\item Which exact external benchmark protocol offers a defensible published comparison within the deadline?
-\end{enumerate}
-
-\subsection{Research Reflection and Next Action}
-The literature strengthens the rationale for morphology--controller co-evolution but does not settle its performance advantage. The immediate next step is a minimal physics feasibility experiment, followed by a dated journal entry reporting observations, measured runtime and any changes to the genome or controller design. No benchmark results are claimed here.
-
-\subsection{Research Assistance and Verification Record}
-This entry was drafted with ChatGPT (GPT-6) on 21 November 2026 using a request to research the next EvoMorph journal commit against the assignment brief. Sources consulted were Sims (1994), Lipson and Pollack (2000), Bongard et al. (2006), and COCO/BBOB documentation. The team must check the cited papers and benchmark specification, record retained or revised claims, and add the relevant prompt/output extracts to the final AI usage declaration. No experimental code or measurements were generated for this entry.
-
-\bibliographystyle{plainnat}
-\bibliography{references}
+    \bibliographystyle{plainnat}
+    \bibliography{main}
 \end{document}

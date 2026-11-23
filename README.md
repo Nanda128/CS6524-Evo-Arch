@@ -8,7 +8,7 @@ Initial research and design proposal only. No working evolutionary engine or phy
 
 ## Research journal
 
-The LaTeX source is in `journal/main.tex`, with BibTeX references in `journal/references.bib`.
+The LaTeX source is in `journal/main.tex`, with BibTeX references in `journal/main.bib`.
 
 Build locally using:
 

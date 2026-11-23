@@ -1,16 +1,20 @@
-# Research source notes — 21 November 2026
+# Research source notes — 22 November 2026
 
-| Source | URL | Main relevance |
+| Source | Location | Main relevance |
 |---|---|---|
-| Sims (1994) | https://www.karlsims.com/papers/siggraph94.pdf | Co-evolving morphology and control; graph genotype |
-| Lipson & Pollack (2000) | https://doi.org/10.1038/35023115 | Actuated physical structures selected for locomotion |
-| Bongard et al. (2006) | https://doi.org/10.1126/science.1133687 | Self-modelling and damage recovery; future work |
-| COCO/BBOB | https://coco-platform.org/testsuites/bbob/overview.html | Standard benchmark suite; comparison protocol |
+| Ryan, Collins & O'Neill (1998) | Week 4 lecture; https://doi.org/10.1007/BFb0055930 | Original GE: linear genome, BNF grammar, mod-rule mapping |
+| Koza (1992) | Week 2–3 lectures | Ramped half-and-half, closure/protected operators, Santa Fe ant and multiplexer tableaus |
+| Ryan & Azad (2003) | Knowledge base: `Sensible Initialisation in Chorus.pdf` | RHH-style "sensible" initialisation vs random; random won on Santa Fe |
+| Nicolau (2017) | Knowledge base: `Understanding grammatical evolution initialisation.pdf`; https://doi.org/10.1007/s10710-017-9309-9 | Six GE initialisers on 16 problems; full experimental setup; PTC2 variant best |
+| Luke (2000) | https://doi.org/10.1109/4235.873237 (abstract only so far) | Original PTC1/PTC2 tree-creation algorithms |
+| Harper (2010) | https://doi.org/10.1109/CEC.2010.5586336 (abstract only so far) | PTC2 applied to GE; explosive grammars |
+| White et al. (2013) | https://doi.org/10.1007/s10710-012-9177-2 | Benchmark blacklist (quartic, multiplexer, parity, artificial ant) and replacements (Keijzer-6, Vladislavleva-4) |
+| Langdon & Poli (1998) | Week 3 lecture reference | Why the Santa Fe ant is hard (deceptive landscape) |
 
-Evidence status: literature scoping only; no implementation or experimental results.
+Evidence status: literature scoping only; no implementation or experimental results. Bibliographic details verified against publisher/index records on 22 November 2026.
 
 Questions for next review:
-1. What exact operators and fitness criteria did Sims use?
-2. Which physics assumptions apply to EvoMorph?
-3. Which exact COCO instances and reference results can be matched?
-4. Which design choices survive the first physics prototype?
+1. What exactly does PTC2 do in Luke (2000), and how did Nicolau adapt it for GE?
+2. Which Nicolau grammars and initialiser parameters can we match exactly?
+3. Which step limit did each Santa Fe comparison paper use?
+4. Which design choices survive the first mapper/initialiser prototype?
